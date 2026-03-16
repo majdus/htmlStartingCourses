@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini-Cours : Crée ton premier site interactif</title>
+
+    <!-- Tailwind CSS (Design du cours) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Typographie -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Configuration Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        editor: {
+                            bg: '#1e293b',
+                            fg: '#e2e8f0',
+                            accent: '#3b82f6'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Styles pour l'éditeur maison */
+        .playground {
+            border: 1px solid #cbd5e1;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+        }
+
+        .playground-header {
+            background: #f1f5f9;
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid #cbd5e1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #64748b;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #3b82f6;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .editor-container {
+            background: #1e293b;
+            position: relative;
+        }
+
+        textarea.code-editor {
+            width: 100%;
+            min-height: 250px;
+            background: #1e293b;
+            color: #e2e8f0;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            padding: 1rem;
+            border: none;
+            resize: vertical;
+            outline: none;
+            line-height: 1.5;
+        }
+
+        .preview-area {
+            border-top: 1px solid #cbd5e1;
+            background: #fff;
+            padding: 1rem;
+        }
+
+        iframe.preview-frame {
+            width: 100%;
+            height: 300px;
+            /* Hauteur par défaut du résultat */
+            border: 1px dashed #cbd5e1;
+            border-radius: 0.5rem;
+        }
+
+        /* Scrollbar custom */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+    <div class="flex min-h-screen">
+        <!-- SIDEBAR -->
+        <aside class="w-64 bg-slate-900 text-white fixed h-full hidden md:flex flex-col overflow-y-auto z-10">
+            <div class="p-6 border-b border-slate-700">
+                <h1 class="text-xl font-bold text-blue-400">Web Dev Starter</h1>
+                <p class="text-xs text-slate-400 mt-1">Introduction HTML/CSS/JS</p>
+            </div>
+            <nav class="flex-1 p-4 space-y-1">
+                <a href="#intro" class="block px-4 py-2 rounded hover:bg-slate-800 transition text-sm">Introduction</a>
+                <a href="#etape0" class="block px-4 py-2 rounded hover:bg-slate-800 transition text-sm">0. Le Strict
+                    Minimum</a>
+                <a href="#etape1" class="block px-4 py-2 rounded hover:bg-slate-800 transition text-sm">1. Structure
+                    HTML</a>
+                <a href="#etape2" class="block px-4 py-2 rounded hover:bg-slate-800 transition text-sm">2. Intelligence
+                    JS</a>
+                <a href="#etape3" class="block px-4 py-2 rounded hover:bg-slate-800 transition text-sm">3. JS
+                    Externe</a>
+                <a href="#etape4" class="block px-4 py-2 rounded hover:bg-slate-800 transition text-sm">4. Design
+                    CSS</a>
+                <a href="#etape5" class="block px-4 py-2 rounded hover:bg-slate-800 transition text-sm">5. CSS
+                    Externe</a>
+                <a href="#etape6" class="block px-4 py-2 rounded hover:bg-slate-800 transition text-sm">6. Tailwind
+                    CSS</a>
+                <a href="#etape7" class="block px-4 py-2 rounded hover:bg-slate-800 transition text-sm">7. L'IA
+                    Assistante</a>
+            </nav>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 md:ml-64 p-6 md:p-12 max-w-4xl mx-auto">
+
+            <section id="intro" class="mb-16">
+                <span
+                    class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded uppercase tracking-wide">
+                    Cours Interactif
+                </span>
+                <h1 class="text-4xl font-bold mt-2 text-slate-900">Crée ton premier site interactif</h1>
+
+                <p class="mt-4 text-lg text-slate-600 leading-relaxed">
+                    Bienvenue dans ce cours d'introduction au développement web. Nous allons construire une application
+                    complète en étapes progressives.
+                </p>
+
+                <div class="mt-8 grid md:grid-cols-3 gap-6">
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm transition hover:shadow-md">
+                        <div class="text-blue-600 font-bold mb-2">1. HTML</div>
+                        <p class="text-sm text-slate-500"><strong>HyperText Markup Language</strong> : Le squelette. Il
+                            définit la structure et le contenu de la page (titres, paragraphes, images).</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm transition hover:shadow-md">
+                        <div class="text-indigo-600 font-bold mb-2">2. CSS</div>
+                        <p class="text-sm text-slate-500"><strong>Cascading Style Sheets</strong> : L'habillage. Il
+                            permet de mettre en forme le contenu (couleurs, polices, disposition).</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm transition hover:shadow-md">
+                        <div class="text-amber-600 font-bold mb-2">3. JavaScript</div>
+                        <p class="text-sm text-slate-500"><strong>Le cerveau</strong> : C'est le langage de
+                            programmation qui rend la page interactive (clics, calculs, animations).</p>
+                    </div>
+                </div>
+
+                <div class="mt-8 p-4 bg-blue-50 border-l-4 border-blue-400 text-blue-800 rounded">
+                    <strong>Objectif :</strong> Comprendre comment ces trois langages travaillent ensemble pour créer
+                    une expérience utilisateur moderne.
+                </div>
+
+                <div class="mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 rounded">
+                    <strong>Mode d'emploi :</strong> Apprends en modifiant le code directement sur cette page. Écris ton
+                    code dans la zone noire, puis clique sur le bouton bleu <strong>"▶ Exécuter"</strong> pour voir le
+                    résultat.
+                </div>
+            </section>
+
+            <!-- ETAPE 0 -->
+            <section id="etape0" class="mb-20 pt-10 border-t border-slate-200">
+                <h2 class="text-2xl font-bold text-slate-900 mb-4">🐣 Étape 0 : Le Strict Minimum</h2>
+                <p class="mb-4 text-slate-600">Pour commencer, voici la structure minimale d'une page HTML.</p>
+
+                <!-- PLAYGROUND 0 -->
+                <div class="playground" id="pg-0">
+                    <div class="playground-header">
+                        <div class="flex space-x-2 tabs-container">
+                            <button class="tab-btn active" onclick="switchTab('pg-0', 'html')">index.html</button>
+                        </div>
+                        <button onclick="runCode('pg-0')"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded text-sm font-bold transition flex items-center gap-2">
+                            <span>▶ Exécuter</span>
+                        </button>
+                    </div>
+                    <div class="editor-container">
+                        <textarea class="code-editor html-code" spellcheck="false"><!DOCTYPE html>
+<html>
+<body>
+    <h1>Hello World !</h1>
+    <p>Change ce texte et clique sur Exécuter !</p>
+</body>
+</html></textarea>
+                    </div>
+                    <div class="preview-area">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase mb-2">Résultat :</h4>
+                        <iframe class="preview-frame"></iframe>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ETAPE 1 -->
+            <section id="etape1" class="mb-20 pt-10 border-t border-slate-200">
+                <h2 class="text-2xl font-bold text-slate-900 mb-4">🏗️ Étape 1 : Le Squelette Structuré</h2>
+                <p class="mb-4 text-slate-600">Ajoutons des boutons et des champs de saisie.</p>
+
+                <div class="playground" id="pg-1">
+                    <div class="playground-header">
+                        <div class="flex space-x-2 tabs-container">
+                            <button class="tab-btn active">index.html</button>
+                        </div>
+                        <button onclick="runCode('pg-1')"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded text-sm font-bold transition">▶
+                            Exécuter</button>
+                    </div>
+                    <div class="editor-container">
+                        <textarea class="code-editor html-code" spellcheck="false"><!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Structure</title>
+</head>
+<body>
+    <header>
+        <h1>Mon Site</h1>
+    </header>
+    <section>
+        <label>Ton prénom :</label>
+        <input type="text" id="monInput" placeholder="...">
+        <button>Clique ici</button>
+    </section>
+    <footer>
+        <p>Pied de page</p>
+    </footer>
+</body>
+</html></textarea>
+                    </div>
+                    <div class="preview-area">
+                        <iframe class="preview-frame"></iframe>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ETAPE 2 -->
+            <section id="etape2" class="mb-20 pt-10 border-t border-slate-200">
+                <h2 class="text-2xl font-bold text-slate-900 mb-4">🧠 Étape 2 : L'Intelligence (JS)</h2>
+                <p class="mb-4 text-slate-600">Rendons le bouton vivant avec du JavaScript interne.</p>
+
+                <div class="playground" id="pg-2">
+                    <div class="playground-header">
+                        <div class="flex space-x-2">
+                            <button class="tab-btn active">index.html</button>
+                        </div>
+                        <button onclick="runCode('pg-2')"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded text-sm font-bold transition">▶
+                            Exécuter</button>
+                    </div>
+                    <div class="editor-container">
+                        <textarea class="code-editor html-code" spellcheck="false"><!DOCTYPE html>
+<html>
+<body>
+    <h1>Test JS</h1>
+    <input type="text" id="monInput" placeholder="Ton nom">
+    <button id="monBouton">Saluer</button>
+    <div id="zoneResultat" style="margin-top:10px; color:blue;"></div>
+
+    <script>
+        const btn = document.getElementById('monBouton');
+        const input = document.getElementById('monInput');
+        const zone = document.getElementById('zoneResultat');
+
+        btn.addEventListener('click', function () {
+            let nom = input.value;
+            if (nom) {
+                zone.innerHTML = "Bonjour <b>" + nom + "</b> !";
+            } else {
+                alert("Écris un nom !");
+            }
+        });
+    </script>
+</body>
+</html></textarea>
+                    </div>
+                    <div class="preview-area"><iframe class="preview-frame"></iframe></div>
+                </div>
+            </section>
+
+            <!-- ETAPE 3 : MULTI FICHIERS -->
+            <section id="etape3" class="mb-20 pt-10 border-t border-slate-200">
+                <h2 class="text-2xl font-bold text-slate-900 mb-4">📁 Étape 3 : JS Externe (Multi-fichiers)</h2>
+                <p class="mb-4 text-slate-600">
+                    Ici, nous simulons deux fichiers.
+                    <strong>Clique sur les onglets</strong> pour passer du HTML au JavaScript.
+                </p>
+
+                <div class="playground" id="pg-3">
+                    <div class="playground-header">
+                        <div class="flex space-x-2 tabs-container">
+                            <button class="tab-btn active" onclick="switchTab('pg-3', 'html')">index.html</button>
+                            <button class="tab-btn" onclick="switchTab('pg-3', 'js')">script.js</button>
+                        </div>
+                        <button onclick="runCode('pg-3')"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded text-sm font-bold transition">▶
+                            Exécuter</button>
+                    </div>
+
+                    <!-- HTML EDITOR -->
+                    <div class="editor-container tab-content-html">
+                        <textarea class="code-editor html-code" spellcheck="false"><!DOCTYPE html>
+<html>
+<body>
+    <h1>Fichiers Séparés 📁</h1>
+    <input type="text" id="inp3" placeholder="Nom...">
+    <button id="btn3">Valider</button>
+    <p id="res3"></p>
+    
+    <!-- Le script est lié ici, mais nous le simulons dans l'onglet JS -->
+    <script src="script.js"></script>
+</body>
+</html></textarea>
+                    </div>
+
+                    <!-- JS EDITOR (Hidden by default) -->
+                    <div class="editor-container tab-content-js hidden">
+                        <textarea class="code-editor js-code" spellcheck="false">// Code JavaScript
+const btn = document.getElementById('btn3');
+const inp = document.getElementById('inp3');
+const res = document.getElementById('res3');
+
+btn.addEventListener('click', () => {
+    if(inp.value.trim() !== "") {
+        res.innerHTML = "Coucou " + inp.value;
+        res.style.color = "green";
+    } else {
+        alert("Champ vide !");
+    }
+});</textarea>
+                    </div>
+
+                    <div class="preview-area"><iframe class="preview-frame"></iframe></div>
+                </div>
+            </section>
+
+            <!-- ETAPE 4 : DESIGN ARTISANAL (Ajouté) -->
+            <section id="etape4" class="mb-20 pt-10 border-t border-slate-200">
+                <h2 class="text-2xl font-bold text-slate-900 mb-4">🎨 Étape 4 : Le Design Artisanal (CSS Interne)</h2>
+                <p class="mb-4 text-slate-600">
+                    Maintenant que le code est bien rangé, occupons-nous du style. Le site est fonctionnel mais brut.
+                    Pour cette étape, nous allons écrire du CSS dans l'entête du fichier HTML pour comprendre comment
+                    cela fonctionne.
+                </p>
+
+                <div class="playground" id="pg-4">
+                    <div class="playground-header">
+                        <div class="flex space-x-2 tabs-container">
+                            <button class="tab-btn active" onclick="switchTab('pg-4', 'html')">index.html</button>
+                            <!-- On garde le JS accessible car le HTML l'appelle -->
+                            <button class="tab-btn" onclick="switchTab('pg-4', 'js')">script.js</button>
+                        </div>
+                        <button onclick="runCode('pg-4')"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded text-sm font-bold transition">▶
+                            Exécuter</button>
+                    </div>
+
+                    <div class="editor-container tab-content-html">
+                        <textarea class="code-editor html-code" spellcheck="false"><!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Étape 4 : CSS Classique</title>
+    <!-- CSS ÉCRIT À LA MAIN DANS LE FICHIER HTML -->
+    <style>
+        /* Style général de la page */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* La carte blanche au centre */
+        .carte {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 350px;
+            text-align: center;
+        }
+
+        /* Les champs et boutons */
+        input {
+            width: 80%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .resultat-box {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <main class="carte">
+        <header>
+            <h1 style="margin-top:0;">Hello World ! 🎨</h1>
+            <p style="color: #666;">Design CSS Interne + JS Externe</p>
+        </header>
+        <section>
+            <label style="display:block; text-align:left; margin-bottom:5px;">Ton prénom :</label>
+            <input type="text" id="monInput" placeholder="Écris ici...">
+            <button id="monBouton">Lancer le script</button>
+            <div id="zoneResultat" class="resultat-box"></div>
+        </section>
+        <footer style="margin-top: 20px; font-size: 12px; color: #999;">
+            <p>CSS Interne</p>
+        </footer>
+    </main>
+
+    <!-- Lien vers notre script externe créé à l'étape précédente -->
+    <script src="script.js"></script>
+</body>
+</html></textarea>
+                    </div>
+
+                    <div class="editor-container tab-content-js hidden">
+                        <textarea class="code-editor js-code" spellcheck="false">// Code JavaScript (Identique à l'étape 3)
+const leChamp = document.getElementById('monInput');
+const leBouton = document.getElementById('monBouton');
+const laZone = document.getElementById('zoneResultat');
+
+leBouton.addEventListener('click', function() {
+    const prenom = leChamp.value;
+
+    if (prenom.trim() !== "") {
+        laZone.innerHTML = `👋 Enchanté, ${prenom} !`;
+        laZone.style.color = "#28a745"; 
+        console.log("Succès : prénom affiché");
+    } else {
+        alert("Hé ! Écris ton prénom d'abord !");
+    }
+});</textarea>
+                    </div>
+
+                    <div class="preview-area"><iframe class="preview-frame"></iframe></div>
+                </div>
+            </section>
+
+            <!-- ETAPE 5 : TOUT SEPARE -->
+            <section id="etape5" class="mb-20 pt-10 border-t border-slate-200">
+                <h2 class="text-2xl font-bold text-slate-900 mb-4">🎨 Étape 5 : HTML + CSS + JS Séparés</h2>
+                <p class="mb-4 text-slate-600">Le Saint Graal du développeur web. 3 onglets pour tout gérer.</p>
+
+                <div class="playground" id="pg-5">
+                    <div class="playground-header">
+                        <div class="flex space-x-2 tabs-container">
+                            <button class="tab-btn active" onclick="switchTab('pg-5', 'html')">index.html</button>
+                            <button class="tab-btn" onclick="switchTab('pg-5', 'css')">style.css</button>
+                            <button class="tab-btn" onclick="switchTab('pg-5', 'js')">script.js</button>
+                        </div>
+                        <button onclick="runCode('pg-5')"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded text-sm font-bold transition">▶
+                            Exécuter</button>
+                    </div>
+
+                    <div class="editor-container tab-content-html">
+                        <textarea class="code-editor html-code" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="carte">
+        <h1>Projet Complet</h1>
+        <p>Modifie le CSS pour changer la couleur !</p>
+        <input type="text" id="inp5" placeholder="Ton nom">
+        <button id="btn5">Go !</button>
+        <div id="res5"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html></textarea>
+                    </div>
+
+                    <div class="editor-container tab-content-css hidden">
+                        <textarea class="code-editor css-code" spellcheck="false">/* style.css */
+body {
+    background: #f0f9ff;
+    font-family: sans-serif;
+    padding: 20px;
+    display: flex; justify-content: center;
+}
+.carte {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    text-align: center;
+}
+button {
+    background: #0ea5e9;
+    color: white; border: none;
+    padding: 8px 16px; border-radius: 4px;
+    cursor: pointer; width: 100%; margin-top: 10px;
+}
+button:hover { background: #0284c7; }
+input { border: 1px solid #ccc; padding: 8px; border-radius: 4px; width: 90%; }</textarea>
+                    </div>
+
+                    <div class="editor-container tab-content-js hidden">
+                        <textarea class="code-editor js-code" spellcheck="false">// script.js
+document.getElementById('btn5').onclick = function() {
+    let nom = document.getElementById('inp5').value;
+    let res = document.getElementById('res5');
+    
+    if(nom) {
+        res.innerHTML = "Super " + nom + " !";
+        res.style.color = "#0ea5e9";
+        res.style.fontWeight = "bold";
+        res.style.marginTop = "15px";
+    }
+};</textarea>
+                    </div>
+
+                    <div class="preview-area"><iframe class="preview-frame"></iframe></div>
+                </div>
+            </section>
+
+            <!-- ETAPE 6 : TAILWIND -->
+            <section id="etape6" class="mb-20 pt-10 border-t border-slate-200">
+                <h2 class="text-2xl font-bold text-slate-900 mb-4">🚀 Étape 6 : Tailwind CSS</h2>
+                <p class="mb-4 text-slate-600">On importe Tailwind via un lien CDN et on utilise les classes
+                    directement.</p>
+
+                <div class="playground" id="pg-6">
+                    <div class="playground-header">
+                        <div class="flex space-x-2 tabs-container">
+                            <button class="tab-btn active" onclick="switchTab('pg-6', 'html')">index.html</button>
+                            <button class="tab-btn" onclick="switchTab('pg-6', 'js')">script.js</button>
+                        </div>
+                        <button onclick="runCode('pg-6')"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded text-sm font-bold transition">▶
+                            Exécuter</button>
+                    </div>
+
+                    <div class="editor-container tab-content-html">
+                        <textarea class="code-editor html-code" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 p-8 flex justify-center">
+
+    <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-sm border-t-4 border-indigo-500">
+        <h1 class="text-2xl font-bold text-slate-800 text-center mb-4">Hello Tailwind</h1>
+        
+        <div class="space-y-3">
+            <input id="inp6" type="text" placeholder="Ton nom..." 
+                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                
+            <button id="btn6" 
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg transition">
+                Valider
+            </button>
+            
+            <div id="res6" class="hidden p-3 bg-green-100 text-green-700 rounded-lg text-center font-bold"></div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html></textarea>
+                    </div>
+
+                    <div class="editor-container tab-content-js hidden">
+                        <textarea class="code-editor js-code" spellcheck="false">const btn = document.getElementById('btn6');
+const inp = document.getElementById('inp6');
+const res = document.getElementById('res6');
+
+btn.addEventListener('click', () => {
+    if(inp.value) {
+        res.innerHTML = `Salut ${inp.value} !`;
+        res.classList.remove('hidden');
+        
+        // Change button color
+        btn.classList.replace('bg-indigo-600', 'bg-green-600');
+        btn.textContent = "Succès !";
+    }
+});</textarea>
+                    </div>
+
+                    <div class="preview-area"><iframe class="preview-frame"></iframe></div>
+                </div>
+            </section>
+
+            <!-- ETAPE 7 -->
+            <section id="etape7" class="mb-20 pt-10 border-t border-slate-200">
+                <h2 class="text-2xl font-bold text-slate-900 mb-4">🤖 Étape 7 : Le Prompt Engineering</h2>
+                <p class="mb-4 text-slate-600">Copie ce prompt pour générer du code similaire avec une IA.</p>
+                <div class="bg-slate-800 text-slate-200 p-6 rounded-lg font-mono text-sm relative group">
+                    <button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText); alert('Copié !')"
+                        class="absolute top-4 right-4 bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded text-xs">Copier</button>
+                    <pre class="whitespace-pre-wrap">Agis comme un **Développeur Front-End Senior** expert en standards web modernes (2026).
+
+**Objectif :**
+Crée une carte interactive simple 'Hello World' qui demande le prénom de l'utilisateur.
+
+**Stack Technique :**
+1. **HTML5 Sémantique** (Accessible).
+2. **Tailwind CSS** (via CDN).
+3. **Vanilla JS (ES6+)**.
+
+**Fonctionnalités requises :**
+* Un champ input et un bouton 'Valider'.
+* Validation : Erreur visuelle si vide.
+* Succès : Affiche 'Bonjour [Prénom]'.
+* **Séparation** : Fournis index.html et script.js séparés.
+
+**Design** :
+* Minimaliste, coins arrondis, ombres douces.
+* Typographie lisible (Inter).</pre>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- LOGIQUE DE L'EDITEUR MAISON (100% Client Side) -->
+    <script>
+        // 1. Navigation des Onglets (HTML / CSS / JS)
+        function switchTab(playgroundId, type) {
+            const container = document.getElementById(playgroundId);
+
+            // Masquer tous les contenus
+            container.querySelectorAll('.editor-container').forEach(el => el.classList.add('hidden'));
+            // Désactiver tous les boutons
+            container.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            // Afficher le bon contenu
+            const contentClass = 'tab-content-' + type;
+            // Si pas de classe spécifique (cas simple pg-0), on prend le premier éditeur
+            const targetContent = container.querySelector('.' + contentClass) || container.querySelector('.editor-container');
+            if (targetContent) targetContent.classList.remove('hidden');
+
+            // Activer le bouton cliqué (on utilise l'event target via le contexte ou recherche)
+            // Ici astuce simple: on cherche le bouton qui contient le texte correspondant au type grosso modo ou on le passe en arg
+            const btns = container.querySelectorAll('.tab-btn');
+            btns.forEach(btn => {
+                if (btn.innerText.toLowerCase().includes(type) ||
+                    (type === 'html' && btn.innerText.includes('index')) ||
+                    (type === 'js' && btn.innerText.includes('script')) ||
+                    (type === 'css' && btn.innerText.includes('style'))) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // 2. Fonction principale : Exécuter le code (RUN)
+        function runCode(playgroundId) {
+            const container = document.getElementById(playgroundId);
+            const iframe = container.querySelector('iframe');
+
+            // Récupérer le contenu des editors
+            const htmlEditor = container.querySelector('.html-code');
+            const cssEditor = container.querySelector('.css-code');
+            const jsEditor = container.querySelector('.js-code');
+
+            let html = htmlEditor ? htmlEditor.value : "";
+            let css = cssEditor ? cssEditor.value : "";
+            let js = jsEditor ? jsEditor.value : "";
+
+            // Nettoyage sommaire : si l'utilisateur met <script src="script.js"> dans le HTML, 
+            // on doit empêcher le navigateur de chercher ce fichier (qui n'existe pas) 
+            // et injecter notre code JS à la place.
+
+            // On enlève les liens externes vers des fichiers fictifs pour éviter des erreurs 404
+            html = html.replace(/<script\s+src=["']script\.js["']\s*><\/script>/gi, "");
+            html = html.replace(/<link\s+rel=["']stylesheet["']\s+href=["']style\.css["']\s*\/?\s*>/gi, "");
+
+            // Construction du document final via srcdoc pour forcer un vrai rechargement du iframe
+            let finalHtml = html;
+
+            if (css) {
+                if (/<\/head>/i.test(finalHtml)) {
+                    finalHtml = finalHtml.replace(/<\/head>/i, `<style>${css}</style></head>`);
+                } else if (/<body[^>]*>/i.test(finalHtml)) {
+                    finalHtml = finalHtml.replace(/<body[^>]*>/i, match => `${match}\n<style>${css}</style>`);
+                } else {
+                    finalHtml = `<style>${css}</style>\n` + finalHtml;
+                }
+            }
+
+            if (js) {
+                const scriptTag = `<script>${js}<\/script>`;
+                if (/<\/body>/i.test(finalHtml)) {
+                    finalHtml = finalHtml.replace(/<\/body>/i, `${scriptTag}</body>`);
+                } else {
+                    finalHtml = finalHtml + `\n${scriptTag}`;
+                }
+            }
+
+            iframe.srcdoc = finalHtml;
+        }
+
+        // Initialisation : Lancer tous les snippets une fois au chargement pour avoir un aperçu
+        window.addEventListener('load', () => {
+            ['pg-0', 'pg-1', 'pg-2', 'pg-3', 'pg-4', 'pg-5', 'pg-6'].forEach(id => {
+                // Petit délai pour ne pas bloquer le rendu initial
+                setTimeout(() => runCode(id), 100);
+            });
+        });
+
+        // Navigation smooth scroll sidebar
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+
+</html>
