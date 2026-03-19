@@ -11,12 +11,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Copy files via SCP
+      - name: Rename specific HTML file
+        run: mv CoursWebInteractif.html index.html
+
+      - name: Copy ONLY index.html via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.ID_ED25519_HTML_COURSES }}
-          source: "."
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "index.html"
           target: "/var/www/html-starting-courses"
+          rm: true
 
