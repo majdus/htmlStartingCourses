@@ -16,7 +16,7 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.ID_ED25519_HTML_COURSES }}
           source: "."
           target: "/var/www/html-starting-courses"
 
